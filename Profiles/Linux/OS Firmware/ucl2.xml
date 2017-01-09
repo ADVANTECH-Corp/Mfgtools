@@ -246,7 +246,7 @@
 	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot.imx">Loading U-boot</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
-	<CMD state="BootStrap" type="load" file="firmware/initramfs.cpio.gz.uboot" address="0x12C00000"
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage-%dtb%.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
@@ -267,7 +267,7 @@
 	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot.imx">Loading U-boot</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
-	<CMD state="BootStrap" type="load" file="firmware/initramfs.cpio.gz.uboot" address="0x12C00000"
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage-%dtb%.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
@@ -290,7 +290,7 @@
 	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot.imx">Loading U-boot</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
-	<CMD state="BootStrap" type="load" file="firmware/initramfs.cpio.gz.uboot" address="0x12C00000"
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage-%dtb%.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
@@ -305,7 +305,7 @@
 	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot.imx">Loading U-boot</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
-	<CMD state="BootStrap" type="load" file="firmware/initramfs.cpio.gz.uboot" address="0x12C00000"
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
 	<CMD state="BootStrap" type="load" file="firmware/zImage-%dtb%.dtb" address="0x18000000"
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
