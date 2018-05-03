@@ -1,0 +1,142 @@
+<!--
+* Copyright (C) 2012, Freescale Semiconductor, Inc. All Rights Reserved.
+* The CFG element contains a list of recognized usb devices.
+*  DEV elements provide a name, class, vid and pid for each device.
+*
+* Each LIST element contains a list of update instructions.
+*  "Install" - Erase media and install firmware.
+*  "Update" - Update firmware only.
+*
+* Each CMD element contains one update instruction of attribute type.
+*  "pull" - Does UtpRead(body, file) transaction.
+*  "push" - Does UtpWrite(body, file) transaction.
+*  "drop" - Does UtpCommand(body) then waits for device to disconnect.
+*  "boot" - Finds configured device, forces it to "body" device and downloads "file".
+*  "find" - Waits for "timeout" seconds for the "body" device to connect.
+*  "show" - Parse and show device info in "file".  
+-->
+
+
+<UCL>
+  <CFG>
+    <STATE name="BootStrap" dev="MX6SL" vid="15A2" pid="0063"/>
+    <STATE name="BootStrap" dev="MX6D" vid="15A2" pid="0061"/>
+    <STATE name="BootStrap" dev="MX6Q" vid="15A2" pid="0054"/>
+
+    <STATE name="Updater"   dev="MSC" vid="066F" pid="37FF"/>
+  </CFG>
+
+
+  <LIST name="ADV Image" desc="update All Image">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx">Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%image%">Sending and writting Image</CMD>
+	<CMD state="Updater" type="push" body="frf">Finishing write</CMD>
+	
+	<!-- resize partition -->
+	<CMD state="Updater" type="push" body="$ echo [Resize filesystems...]">Resizing</CMD>
+	<CMD state="Updater" type="push" body="send" file="resizesd_linux.sh.tar">Sending resizesd_linux.sh</CMD>
+	<CMD state="Updater" type="push" body="$ tar xf $FILE "> Resizing...</CMD>
+	<CMD state="Updater" type="push" body="$ sh resizesd_linux.sh /dev/mmcblk%mmc%"> Resizing...</CMD>
+
+	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
+  </LIST>
+  <LIST name="ADV kernel" desc="update kernel and dtb file">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx">Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+	<!-- create fat partition -->
+	<CMD state="Updater" type="push" body="$ mkfs.vfat /dev/mmcblk%mmc%p1">Formatting partition</CMD>
+	<CMD state="Updater" type="push" body="$ mkdir -p /mnt/mmcblk%mmc%p1"/>
+	<CMD state="Updater" type="push" body="$ mount -t vfat /dev/mmcblk%mmc%p1 /mnt/mmcblk%mmc%p1"/>
+	<!-- burn zImage -->
+	<CMD state="Updater" type="push" body="send" file="files/zImage">Sending kernel zImage</CMD>
+	<CMD state="Updater" type="push" body="$ cp $FILE /mnt/mmcblk%mmc%p1/zImage">write kernel image to sd card</CMD>
+	<!-- burn dtb -->
+	<CMD state="Updater" type="push" body="send" file="files/%board%.dtb">Sending Device Tree file</CMD>
+	<CMD state="Updater" type="push" body="$ cp $FILE /mnt/mmcblk%mmc%p1/%board%.dtb">write device tree to sd card</CMD>
+	<CMD state="Updater" type="push" body="$ umount /mnt/mmcblk%mmc%p1">Unmounting vfat partition</CMD>
+	
+	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
+  </LIST>
+  <LIST name="ADV adv-loader" desc="update adv-loader">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx" >Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+	<!-- burn adv-loader -->
+	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd0 0 192">Erasing Boot partition</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/SPL-%board%-%DDR%">Sending SPL</CMD>
+	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mtd0 bs=512 seek=2 ">write SPL to NOR flash</CMD>
+	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
+  </LIST>
+  <LIST name="ADV u-boot" desc="update u-boot">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx">Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+	<!-- burn uboot -->
+	<CMD state="Updater" type="push" body="send" file="files/u-boot_crc.bin.crc">Sending u-boot.bin.crc</CMD>
+	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc% bs=512 seek=2">write u-boot.bin.crc</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/u-boot_crc.bin">Sending u-boot.bin</CMD>
+	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc% bs=512 seek=3">write u-boot.bin</CMD>
+	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
+  </LIST>
+  <LIST name="ADV adv-loader & Image" desc="update adv-loader & Image">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx" >Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+	<!-- burn adv-loader -->
+	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd0 0 192">Erasing Boot partition</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/SPL-%board%-%DDR%">Sending SPL</CMD>
+	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mtd0 bs=512 seek=2 ">write SPL to NOR flash</CMD>
+	
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%image%">Sending and writting Image</CMD>
+	<CMD state="Updater" type="push" body="frf">Finishing write</CMD>
+	
+	<!-- resize partition -->
+	<CMD state="Updater" type="push" body="$ echo [Resize filesystems...]">Resizing</CMD>
+	<CMD state="Updater" type="push" body="send" file="resizesd_linux.sh.tar">Sending resizesd_linux.sh</CMD>
+	<CMD state="Updater" type="push" body="$ tar xf $FILE "> Resizing...</CMD>
+	<CMD state="Updater" type="push" body="$ sh resizesd_linux.sh /dev/mmcblk%mmc%"> Resizing...</CMD>
+	
+	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
+  </LIST>
+    <LIST name="ADV test" desc="test">
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-%board%-%DDR%.imx">Loading U-boot</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x12000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Kernel.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot" address="0x12C00000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading Initramfs.</CMD>
+	<CMD state="BootStrap" type="load" file="firmware/%board%.dtb" address="0x18000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+	<CMD state="Updater" type="push" body="$ ls /sbin/resize2fs">Done</CMD>
+	<CMD state="Updater" type="push" body="$ echo  ============TEST=============">Done</CMD>
+  </LIST>
+</UCL>
