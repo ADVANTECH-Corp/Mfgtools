@@ -37,7 +37,7 @@
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
 
-	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%image%">Sending and writting Image</CMD>
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%board%-%DDR%/%image%">Sending and writting Image</CMD>
 	<CMD state="Updater" type="push" body="frf">Finishing write</CMD>
 	
 	<!-- resize partition -->
@@ -62,10 +62,10 @@
 	<CMD state="Updater" type="push" body="$ mkdir -p /mnt/mmcblk%mmc%p1"/>
 	<CMD state="Updater" type="push" body="$ mount -t vfat /dev/mmcblk%mmc%p1 /mnt/mmcblk%mmc%p1"/>
 	<!-- burn zImage -->
-	<CMD state="Updater" type="push" body="send" file="files/zImage">Sending kernel zImage</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/zImage">Sending kernel zImage</CMD>
 	<CMD state="Updater" type="push" body="$ cp $FILE /mnt/mmcblk%mmc%p1/zImage">write kernel image to sd card</CMD>
 	<!-- burn dtb -->
-	<CMD state="Updater" type="push" body="send" file="files/%board%.dtb">Sending Device Tree file</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/%board%.dtb">Sending Device Tree file</CMD>
 	<CMD state="Updater" type="push" body="$ cp $FILE /mnt/mmcblk%mmc%p1/%board%.dtb">write device tree to sd card</CMD>
 	<CMD state="Updater" type="push" body="$ umount /mnt/mmcblk%mmc%p1">Unmounting vfat partition</CMD>
 	
@@ -82,7 +82,7 @@
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
 	<!-- burn adv-loader -->
 	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd0 0 192">Erasing Boot partition</CMD>
-	<CMD state="Updater" type="push" body="send" file="files/SPL-%board%-%DDR%">Sending SPL</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/SPL">Sending SPL</CMD>
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mtd0 bs=512 seek=2 ">write SPL to NOR flash</CMD>
 	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
   </LIST>
@@ -96,9 +96,9 @@
 		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE">Loading device tree.</CMD>
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
 	<!-- burn uboot -->
-	<CMD state="Updater" type="push" body="send" file="files/u-boot_crc.bin.crc">Sending u-boot.bin.crc</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/u-boot_crc.bin.crc">Sending u-boot.bin.crc</CMD>
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc% bs=512 seek=2">write u-boot.bin.crc</CMD>
-	<CMD state="Updater" type="push" body="send" file="files/u-boot_crc.bin">Sending u-boot.bin</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/u-boot_crc.bin">Sending u-boot.bin</CMD>
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mmcblk%mmc% bs=512 seek=3">write u-boot.bin</CMD>
 	<CMD state="Updater" type="push" body="$ echo Update Complete!">Done</CMD>
   </LIST>
@@ -113,10 +113,10 @@
 	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
 	<!-- burn adv-loader -->
 	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd0 0 192">Erasing Boot partition</CMD>
-	<CMD state="Updater" type="push" body="send" file="files/SPL-%board%-%DDR%">Sending SPL</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/%board%-%DDR%/SPL">Sending SPL</CMD>
 	<CMD state="Updater" type="push" body="$ dd if=$FILE of=/dev/mtd0 bs=512 seek=2 ">write SPL to NOR flash</CMD>
 	
-	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%image%">Sending and writting Image</CMD>
+	<CMD state="Updater" type="push" body="pipe dd of=/dev/mmcblk%mmc%" file="files/%board%-%DDR%/%image%">Sending and writting Image</CMD>
 	<CMD state="Updater" type="push" body="frf">Finishing write</CMD>
 	
 	<!-- resize partition -->
